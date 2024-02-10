@@ -6,6 +6,7 @@
 // Execute `rustlings hint try_from_into` or use the `hint` watch subcommand for a hint.
 
 use std::convert::{TryFrom, TryInto};
+use std::io::Error;
 
 #[derive(Debug, PartialEq)]
 struct Color {
@@ -23,7 +24,6 @@ enum IntoColorError {
     IntConversion,
 }
 
-// I AM NOT DONE
 
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
@@ -34,10 +34,35 @@ enum IntoColorError {
 // but the slice implementation needs to check the slice length!
 // Also note that correct RGB color values must be integers in the 0..=255 range.
 
+impl Color {
+    pub fn parse_value(value: i16) -> Result<u8, IntoColorError> {
+        if value >= 0 && value <= 255 {
+            Ok(value as u8)
+        }
+        else { Err(IntoColorError::IntConversion) }
+    }
+}
+
 // Tuple implementation
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
+
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        let red = match Color::parse_value(tuple.0) {
+            Ok(a) => a,
+            Err(e) => return Err(e)
+        };
+        let green = match Color::parse_value(tuple.1) {
+            Ok(a) => a,
+            Err(e) => return Err(e)
+        };
+        let blue = match Color::parse_value(tuple.2) {
+            Ok(a) => a,
+            Err(e) => return Err(e)
+        };
+
+        Ok(Color{red, green, blue })
+
     }
 }
 
@@ -45,6 +70,20 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        let red = match Color::parse_value(arr[0]) {
+            Ok(a) => a,
+            Err(e) => return Err(e)
+        };
+        let green = match Color::parse_value(arr[1]) {
+            Ok(a) => a,
+            Err(e) => return Err(e)
+        };
+        let blue = match Color::parse_value(arr[2]) {
+            Ok(a) => a,
+            Err(e) => return Err(e)
+        };
+
+        Ok(Color{red, green, blue })
     }
 }
 
@@ -52,6 +91,23 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3 {
+            return Err(IntoColorError::BadLen);
+        }
+        let red = match Color::parse_value(slice[0]) {
+            Ok(a) => a,
+            Err(e) => return Err(e)
+        };
+        let green = match Color::parse_value(slice[1]) {
+            Ok(a) => a,
+            Err(e) => return Err(e)
+        };
+        let blue = match Color::parse_value(slice[2]) {
+            Ok(a) => a,
+            Err(e) => return Err(e)
+        };
+
+        Ok(Color{red, green, blue })
     }
 }
 
